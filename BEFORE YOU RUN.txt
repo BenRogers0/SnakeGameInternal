@@ -1,0 +1,8 @@
+before you run this code you will need to have pygame installed.
+To do this all you need to do is type into your terminal:
+"pip install pygame"
+If this doesnt work, try doing it in CMD as an administrator.
+
+If you receive errors try updating pip with python: 
+"-m pip install --upgrade pip"
+from: https://stackoverflow.com/questions/61520537/how-does-one-successfully-download-and-import-pygame
