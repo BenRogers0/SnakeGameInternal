@@ -2,7 +2,7 @@
 # Ben Rogers 13J5
 # DIP Programming internal - AS91906 and AS91907 (3.7/3.8)
 
-# snake game iteration eleven- implementing different screens
+# snake game iteration twelve, final hand in, basically polishing off
 
 #note that i have referenced sources of where i have learned most of the code used in this program, 
 # before begining any coding, I firstly read up on the basics, whcih was mostly done at this 
@@ -17,11 +17,17 @@ import random
 from pygame.constants import KEYDOWN
 #vector2 is a 2 dimensional vector, basically allows me to use 2d shapes in my program (squares, rectangles, etc)
 from pygame.math import Vector2
+import tkinter
+from tkinter import messagebox
 
 # create snake class
 #the idea of having seperate classes for snake, fruit, and main was simply just so i could keep my code simple by
 # seperating the two main problems i have, this also makes it easy to find things when coding, and it also helped 
 # when i could easily reference each class with self.fruit, and self.snake
+
+#shows how the user can control the snake
+messagebox.showinfo(title="Instructions", message="Use arrow keys, or W,A,S,D to move! \nCollect as much fruit as you can to get the highest score!")
+
 class Snake:
     def __init__(self):
         #define 'body' as a 2d vector at position (x,y)
@@ -75,8 +81,8 @@ class Snake:
     def draw_snake(self):
         #update directions of head and tail, ensures that the body parts are facing the correct direction with graphics, 
         # just so it looks clean and professional
-        self.update_head()
-        self.update_tail()
+        self.update_head_direction()
+        self.update_tail_direction()
         
         #enumerate gives a value to each body piece so i can use them later, it basically replaces the need for me
         # to create an incrementing variable (such as n = n+1)
@@ -120,19 +126,19 @@ class Snake:
                     #up left
                     if previous_block.x == -1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == -1:
                         screen.blit(self.body_bend_ul, body_rect)
-                    #down left
-                    elif previous_block.x == -1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == -1:
-                        screen.blit(self.body_bend_dl, body_rect)
                     #up right
                     elif previous_block.x == 1 and next_block.y == -1 or previous_block.y == -1 and next_block.x == 1:
                         screen.blit(self.body_bend_ur, body_rect)
+                    #down left
+                    elif previous_block.x == -1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == -1:
+                        screen.blit(self.body_bend_dl, body_rect)
                     #down right
                     elif previous_block.x == 1 and next_block.y == 1 or previous_block.y == 1 and next_block.x == 1:
                         screen.blit(self.body_bend_dr, body_rect)
         
     #upadates head direction, basically checks what direction it is facing, and makes image with the correct 
     # orientation display
-    def update_head(self):
+    def update_head_direction(self):
         head_direction = self.body[1] - self.body[0]
         #sets head as the left direction if facing left
         if head_direction == pygame.Vector2(1, 0):
@@ -148,7 +154,7 @@ class Snake:
             self.head = self.head_down
 
     #updates tail direction, similarly to the way it works for the head
-    def update_tail(self):
+    def update_tail_direction(self):
         tail_direction = self.body[-2] - self.body[-1]
         #left
         if tail_direction == pygame.Vector2(-1, 0):
@@ -212,10 +218,10 @@ class Fruit:
     def randomize_fruit_pos(self):
         # following lines determine position on screen, randint creates random value for each axis, 
         # -1 makes sure it doesnt 'spawn' off screen
-        self.x = random.randint(0, cell_number-1)
-        self.y = random.randint(0, cell_number-1)
+        self.x = random.randint(0, cell_amount-1)
+        self.y = random.randint(0, cell_amount-1)
         #gives the position a variable as "pos" (short for position)
-        self.pos = Vector2(self.x, self.y)
+        self.position = Vector2(self.x, self.y)
 
 
 #create main class
@@ -242,31 +248,31 @@ class Main:
 
     def draw_grapes(self):
         # draws image, 'grape', to the fruit_rect position
-        fruit_rect = pygame.Rect(int(self.fruit.pos.x*cell_size), int(self.fruit.pos.y*cell_size), cell_size, cell_size)
+        fruit_rect = pygame.Rect(int(self.fruit.position.x*cell_size), int(self.fruit.position.y*cell_size), cell_size, cell_size)
         screen.blit(grapes, fruit_rect)
     
     #creates function to draw the banana image on the fruit position
     def draw_banana(self):
-        fruit_rect = pygame.Rect(int(self.fruit.pos.x*cell_size), int(self.fruit.pos.y*cell_size), cell_size, cell_size)
+        fruit_rect = pygame.Rect(int(self.fruit.position.x*cell_size), int(self.fruit.position.y*cell_size), cell_size, cell_size)
         screen.blit(banana, fruit_rect)
     
     #creates function to draw the cherry image on the fruit position
     def draw_cherries(self):
-        fruit_rect = pygame.Rect(int(self.fruit.pos.x*cell_size), int(self.fruit.pos.y*cell_size), cell_size, cell_size)
+        fruit_rect = pygame.Rect(int(self.fruit.position.x*cell_size), int(self.fruit.position.y*cell_size), cell_size, cell_size)
         screen.blit(cherries, fruit_rect)
 
     #creates function to draw the strawberry image on the fruit position
     def draw_strawberry(self):
-        fruit_rect = pygame.Rect(int(self.fruit.pos.x*cell_size), int(self.fruit.pos.y*cell_size), cell_size, cell_size)
+        fruit_rect = pygame.Rect(int(self.fruit.position.x*cell_size), int(self.fruit.position.y*cell_size), cell_size, cell_size)
         screen.blit(strawberry, fruit_rect)
 
     #creates function to draw the watermelon image on the fruit position
     def draw_watermelon(self):
-        fruit_rect = pygame.Rect(int(self.fruit.pos.x*cell_size), int(self.fruit.pos.y*cell_size), cell_size, cell_size)
+        fruit_rect = pygame.Rect(int(self.fruit.position.x*cell_size), int(self.fruit.position.y*cell_size), cell_size, cell_size)
         screen.blit(watermelon, fruit_rect)
 
     def draw_apple(self):
-        fruit_rect = pygame.Rect(int(self.fruit.pos.x*cell_size), int(self.fruit.pos.y*cell_size), cell_size, cell_size)
+        fruit_rect = pygame.Rect(int(self.fruit.position.x*cell_size), int(self.fruit.position.y*cell_size), cell_size, cell_size)
         screen.blit(apple, fruit_rect)
 
     #draws the main parts of the game, grass background, snake body, and score box
@@ -278,7 +284,7 @@ class Main:
     def check_collision(self):
         # if snake head collides (hits) a fruit, move the fruit somewhere else, grow snake length, 
         # and play eating sound
-        if self.fruit.pos == self.snake.body[0]:
+        if self.fruit.position == self.snake.body[0]:
             self.fruit.randomize_fruit_pos()
             self.snake.add_block()
             self.snake.nom_sound.play()
@@ -288,12 +294,12 @@ class Main:
         for block in self.snake.body[1:]:
             #basically, if any part, aside from the head, is in the same position as the fruit, the fruit will 
             # move somewhere else (this will be called until a new place is found)
-            if block == self.fruit.pos:
+            if block == self.fruit.position:
                 self.fruit.randomize_fruit_pos()
         
     def check_fail(self):
         # check if snake x and y values are in valid positions, i.e. not out of bounds, otherwise game over
-        if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
+        if not 0 <= self.snake.body[0].x < cell_amount or not 0 <= self.snake.body[0].y < cell_amount:
             self.snake.reset()
         #check if the the head block hits the rest of the body, if this is the case, game over
         for block in self.snake.body[1:]:
@@ -304,11 +310,11 @@ class Main:
     def draw_grass(self):
         #sets darker colour
         GRASS_COLOUR = (160,200,30)
-        
-        for row in range(cell_number):
+        #learned from https://stackoverflow.com/questions/45945254/make-a-88-chessboard-in-pygame-with-python
+        for row in range(cell_amount):
             #check if the row is an even number (% 2 == 0 checks if it is a multiple of 2, so an even number)
             if row % 2 == 0:
-                for col in range(cell_number):
+                for col in range(cell_amount):
                     #check if the colum is an even number (same as above)
                     if col % 2 == 0:
                         #all these locations (places where the even columns and rows intersect) will be the
@@ -317,7 +323,7 @@ class Main:
                         pygame.draw.rect(screen, GRASS_COLOUR,grass_rect)
             else:
                 #same as above, but for column
-                for col in range(cell_number):
+                for col in range(cell_amount):
                     if col % 2 != 0:
                         grass_rect= pygame.Rect(col * cell_size,row*cell_size,cell_size,cell_size)
                         pygame.draw.rect(screen, GRASS_COLOUR,grass_rect)
@@ -352,8 +358,8 @@ class Main:
         #https://pygame.readthedocs.io/en/latest/4_text/text.html 
         score_box = font.render(score_text, True, (56,74,12))
         #positions the box
-        score_x = int(cell_size * cell_number - 80)
-        score_y = int(cell_size * cell_number - 40)
+        score_x = int(cell_size * cell_amount - 80)
+        score_y = int(cell_size * cell_amount - 40)
         score_rect = score_box.get_rect(center = (score_x,score_y))
         apple_rect = apple.get_rect(midright = (score_rect.left,score_rect.centery))
         #draws the box and the apple inside the box
@@ -397,11 +403,11 @@ class Main:
         screen.blit(highscore_box, highscore_rect)
         
 pygame.init()
-# cell_size and cell_number control size of the game (shown in 'screen' variable)
+# cell_size and cell_amount control size of the game (shown in 'screen' variable)
 cell_size = 40
-cell_number = 15
+cell_amount = 15
 #set screen variable
-screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size))
+screen = pygame.display.set_mode((cell_amount * cell_size, cell_amount * cell_size))
 # starts game clock - used to control ticks and movements (updates)
 clock = pygame.time.Clock()
 # replacing blue square with different images
@@ -456,7 +462,7 @@ while True:
         if event.type == KEYDOWN:
             # when user presses the 'up arrow' key on their keyboard, the snake will turn and face the
             # upwards direction
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
                 '''
                 i had to add this line below to stop the snake from going back on itself and instantly get a
                 game over, I added a similar line to every direction, essentially what it does is checks
@@ -469,16 +475,16 @@ while True:
                     # but with the y value as 1 less than its current value
                     main_game.snake.direction = pygame.Vector2(0, -1)
             # if down arrow is pressed, the snake will turn and move in the downwards direction
-            if event.key == pygame.K_DOWN:
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 if main_game.snake.direction.y != -1:
                     # same logic as the above code
                     main_game.snake.direction = pygame.Vector2(0, +1)
             # if left arrow is pressed, the snake will turn and face in the left direction
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 if main_game.snake.direction.x != 1:
                     main_game.snake.direction = pygame.Vector2(-1, 0)
             # if the right arrow is pressed, the snake will turn and face in the right direction
-            if event.key == pygame.K_RIGHT:
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 if main_game.snake.direction.x != -1:
                     main_game.snake.direction = pygame.Vector2(+1, 0)
 
